@@ -4,12 +4,61 @@
 Home-Page
 {% endblock %}
 
+{% load static %}
+
+{% block js %}
+<script type="text/javascript" src="{% static 'js/login_page.js' %}"></script>
+{% endblock %}
+
 {% block content %}
-<div class="container">
-    <h1>Images</h1>
-    {% for img in images %}
-    <img src="{{img.image.url}}" width="100px;">
-    {% endfor %}
-    <h1></h1>
+<div class="container-fluid text-center">
+    <p><h1><b>Get your next</b></h1>
+        <h1 class="text-primary"><b>Idea</b></h1>
+    </p>
+    <div class="row">
+        {% for img in images %}
+        <div class="col-sm-2">
+            <img class="rounded" src="{{img.image.url}}" width="200" style="width: 200px;">
+        </div>
+        {% endfor %}
+    </div>
+    <br>
+    <br>
+    <div class="container text-left" id="sign">
+
+        <div id="sign_up" class="d-none">
+            <h1 class="text-danger"><b>SIGN-UP</b></h1>
+            <form action="{% url 'user-registration' %}" method="POST">
+                {% csrf_token %}
+                <b>Username:</b>
+                <input class="form-control" type="text" name="username" placeholder="Enter Username" required>
+                <br>
+                <b>E-mail:</b>
+                <input class="form-control" type="email" name="email" placeholder="Enter Email" required>
+                <br>
+                <b>Password:</b>
+                <input class="form-control" type="password" name="password" placeholder="Enter Password">
+                <br>
+                <input class="btn btn-sm btn-danger" type="submit" value="SIGN-UP">
+                <br>
+                <br>
+            </form>
+        </div>
+        <div id="sign_in" class="d-none">
+            <h1 class="text-danger"><b>LOGIN</b></h1>
+            <form action="{% url 'user-login' %}" method="POST">
+                {% csrf_token %}
+                <b>Username:</b>
+                <input class="form-control" type="text" name="username" placeholder="Enter Username" required>
+                <br>
+                <b>Password:</b>
+                <input class="form-control" type="password" name="password" placeholder="Enter Password">
+                <br>
+                <input class="btn btn-sm btn-danger" type="submit" value="LOGIN">
+                <br>
+                <br>
+            </form>
+        </div>
+    </div>
 </div>
 {% endblock %}
