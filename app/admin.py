@@ -53,13 +53,14 @@ class ImagesPinAdmin(admin.ModelAdmin):
     # exclude = ['name']
     # raw_id_fields = ['tags']
     prepopulated_fields = {'slug': ['image_name']}
-    readonly_fields = ('thumbnail_preview',)
 
-    def thumbnail_preview(self, obj):
-        return obj.thumbnail_preview
-
-    thumbnail_preview.short_description = 'Thumbnail Preview'
-    thumbnail_preview.allow_tags = True
+    # readonly_fields = ('thumbnail_preview',)
+    #
+    # def thumbnail_preview(self, obj):
+    #     return obj.thumbnail_preview
+    #
+    # thumbnail_preview.short_description = 'Thumbnail Preview'
+    # thumbnail_preview.allow_tags = True
 
 
 @admin.register(UserImage)

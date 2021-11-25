@@ -1,0 +1,34 @@
+{% extends './base.html' %}
+
+{% block title %}
+Select folder
+{% endblock %}
+
+{% load static %}
+
+{% block js %}
+<script type="text/javascript" src="{% static 'js/login_page.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid text-center">
+
+    <h1 class="text-primary text-uppercase"><b>Select A Folder</b></h1>
+    <br>
+    <br>
+    <div class="row">
+
+        <div class="col-sm-2">
+        {% for folder in folders %}
+            <a href="#" class="btn btn-lg btn-danger">{{folder.name}}</a>
+            <br>
+        {% endfor %}
+        </div>
+
+    </div>
+    <br>
+    <br>
+
+</div>
+{% endblock %}

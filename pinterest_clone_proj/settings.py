@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app',
     'sorl.thumbnail',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -53,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'app.middlewares.subdomain.subdomain_middleware',  # my custom middleware for subdomain change
 ]
 
 ROOT_URLCONF = 'pinterest_clone_proj.urls'

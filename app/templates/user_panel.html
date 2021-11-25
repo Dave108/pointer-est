@@ -1,1 +1,43 @@
-<h1>user-panel</h1>
+{% extends './base.html' %}
+
+{% block title %}
+User Home-Page
+{% endblock %}
+
+{% load static %}
+
+{% block js %}
+<script type="text/javascript" src="{% static 'js/login_page.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<style>
+    .image-holder {
+      position: relative;
+
+}
+.image-holder .btn {
+  position: absolute;
+  top: 10%;
+  left: 80%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+}
+</style>
+<div class="container-fluid text-center">
+    <p><h1><b>WELCOME</b></h1>
+        <h1 class="text-primary text-uppercase"><b>{{user}}</b></h1>
+    </p>
+    <div class="row">
+        {% for img in images %}
+        <div class="col-sm-2 image-holder">
+            <img class="rounded" src="{{img.image.url}}" width="200" style="width: 200px;">
+            <a href="{% url 'select-folder' %}" class="btn btn-sm btn-danger rounded"><b>SAVE</b></a>
+        </div>
+        {% endfor %}
+    </div>
+    <br>
+    <br>
+
+</div>
+{% endblock %}

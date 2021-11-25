@@ -9,6 +9,8 @@ urlpatterns = [
                   path('user-login/', views.login_user, name="user-login"),
                   path('user-registration/', views.registration, name="user-registration"),
                   path('user-panel/', views.user_panel_view, name="user-panel"),
+                  path('select-folder/', views.select_folder, name="select-folder"),
+                  path('save-image/', views.save_image, name="save-image"),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
