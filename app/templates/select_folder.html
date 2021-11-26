@@ -17,15 +17,22 @@ Select folder
     <h1 class="text-primary text-uppercase"><b>Select A Folder</b></h1>
     <br>
     <br>
-    <div class="row">
+    <div class="row text-center">
 
-        <div class="col-sm-2">
-        {% for folder in folders %}
-            <a href="#" class="btn btn-lg btn-danger">{{folder.name}}</a>
-            <br>
-        {% endfor %}
+
+        <div class="col-sm-6">
+            <div class="row">
+                {% for folder in folders %}
+                <div class="col-sm-3">
+                    <a href="#" class="btn btn-lg btn-danger">{{folder.name}}</a>
+                    <br>
+                </div>
+                {% endfor %}
+            </div>
         </div>
-
+        <div class="col-sm-6">
+            <h1> CREATE NEW FOLDER</h1>
+        </div>
     </div>
     <br>
     <br>

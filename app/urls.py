@@ -11,6 +11,8 @@ urlpatterns = [
                   path('user-panel/', views.user_panel_view, name="user-panel"),
                   path('select-folder/', views.select_folder, name="select-folder"),
                   path('save-image/', views.save_image, name="save-image"),
+                  path('my-pins/', views.my_pins, name="my-pins"),
+                  # path('create-pin/', views.create_pin, name="create-pin"),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,

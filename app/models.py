@@ -10,6 +10,7 @@ from django.utils.html import mark_safe
 class Folder(models.Model):
     user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
+    folder_image = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -18,7 +19,7 @@ class Folder(models.Model):
 class Tag(models.Model):
     word = models.CharField(max_length=35)
     count = models.IntegerField(default=0)
-    created_at = models.DateTimeField(auto_now_add=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.word
@@ -29,6 +30,7 @@ class ImagesPin(models.Model):
     image_name = models.CharField(max_length=200)
     slug = models.CharField(max_length=250)
     tags = models.ManyToManyField(Tag, related_name='photos')
+    description = models.TextField(null=True)
 
     def __str__(self):
         return self.image_name
@@ -53,7 +55,8 @@ class ImagesPin(models.Model):
 
 class UserImage(models.Model):
     imagesPin = models.ForeignKey(ImagesPin, on_delete=models.CASCADE)
-    folder = models.ForeignKey(Folder, on_delete=models.CASCADE)
+    folder = models.ForeignKey(Folder, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.folder.name

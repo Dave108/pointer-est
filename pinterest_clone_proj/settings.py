@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'app',
     'sorl.thumbnail',
     'accounts',
+    'cloudinary',
 ]
 
 MIDDLEWARE = [

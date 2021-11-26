@@ -6,6 +6,8 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import ReadOnlyPasswordHashField, UserCreationForm
+import re
+import cloudinary
 
 
 # Create your views here.
@@ -107,3 +109,150 @@ def select_folder(request):
 
 def save_image(request):
     return HttpResponse("<h1>save image</h1>")
+
+
+def slug_the_name(pinname):
+    name = pinname.replace(' ', '-').lower()
+    regex = re.compile('[@_!#$%^&*()<>?/\|}{~:]')
+
+    regex_list = ["[", "@", "_", "!", "#", "$", "%", "^", "&", "*", "(", ")", "<", ">", "?", "/", "\\", "|", "}", "{",
+                  "~", ":", "]"]
+    print(len(regex_list))
+    for reg in regex_list:
+        if reg in name:
+            name = name.replace(reg, '')
+    # Pass the string in search
+    # method of regex object.
+    if regex.search(name) is None:
+        print("String is accepted")
+        return name
+    else:
+        print("String is not accepted.")
+    return name
+
+
+def create_tags(tag):
+    tag_list = []
+    tag_list = tag.split(',')
+    send_tags = []
+    for tg in tag_list:
+        tg = slug_the_name(tg)
+        try:
+            tag2 = Tag.objects.get(word=tg)
+        except:
+            tag2 = Tag.objects.create(
+                word=tg,
+                count=1,
+            )
+        send_tags.append(tag2)
+    return send_tags
+
+
+def my_pins(request):
+    folders = Folder.objects.filter(user=request.user)
+    tags = Tag.objects.all()
+    for folder in folders:
+        print(folder)
+    for tag in tags:
+        print(tag)
+
+        # for saving pins --------------------
+    if request.method == "POST":
+        new_folder = ''
+        # print(request.POST)
+        pinname = request.POST.get('pin-name')
+        desc = request.POST.get('description')
+        image = request.FILES.get('image')
+
+        # slugifying the image name by calling a funtion made for it
+        slugged_name = slug_the_name(pinname)
+        # print(slugged_name)
+        pinned_image = ImagesPin.objects.create(
+            image=image,
+            image_name=pinname,
+            slug=slugged_name,
+            description=desc,
+        )
+
+        if request.POST.get('board') == "---- Select A Board ----":
+            board = request.POST.get('new-board')
+            # print(board, '---board here')
+            if board:
+                # print("if ran")
+                try:
+                    new_folder = Folder.objects.get(user=request.user, name=board)
+                    print("try ran")
+                except:
+                    print("except ran")
+                    new_folder = Folder.objects.create(
+                        user=request.user,
+                        name=board,
+                        folder_image=pinned_image.image.url,
+                    )
+        else:
+            board = request.POST.get('board')
+            print(board, 'lower board')
+            if board:
+                new_folder = Folder.objects.get(id=board)
+                print(new_folder)
+        print(new_folder, 'new-----folder')
+        if request.POST.get('tag') == "---- Select A Tag ----":
+            print("equal tag")
+            tag = request.POST.get('new-tag')
+            print(tag, "upper tag here----")
+            if tag:
+                tag = create_tags(tag)
+            print(tag, '--------------')
+        else:
+            print("not equal tag")
+            tag = request.POST.get('tag')
+            print(tag, 'tag----------------------------------')
+            if tag:
+                tag = Tag.objects.get(id=tag)
+        print(tag, "final value --------")
+        try:
+            pinned_image.tags.set(tag)
+        except:
+            pinned_image.tags.add(tag)
+        pinned_image.save()
+        print(new_folder, '-----------end ', tag)
+
+        if new_folder:
+            print(new_folder)
+            UserImage.objects.create(
+                imagesPin=pinned_image,
+                folder=new_folder,
+                user=request.user,
+            )
+        else:
+            UserImage.objects.create(
+                imagesPin=pinned_image,
+                user=request.user,
+            )
+    context = {
+        "folders": folders,
+        "tags": tags,
+    }
+    return render(request, 'my_pins.html', context)
+
+# def create_pin(request):
+#     if request.method == "POST":
+#         print(request.POST)
+#         pinname = request.POST.get('pin-name')
+#         desc = request.POST.get('description')
+#         image = request.POST.get('image')
+#         if request.POST.get('board') == "Select A Board":
+#             print("equal board")
+#             board = request.POST.get('new-board')
+#         else:
+#             print("not equal board")
+#             board = request.POST.get('board')
+#
+#         if request.POST.get('tag') == "Select A Tag":
+#             print("equal tag")
+#             tag = request.POST.get('new-tag')
+#         else:
+#             print("not equal tag")
+#             tag = request.POST.get('tag')
+#         print(pinname, desc, image, board, tag)
+#     return HttpResponseRedirect('/my-pins/')

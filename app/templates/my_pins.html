@@ -1,0 +1,124 @@
+{% extends './base.html' %}
+
+{% block title %}
+START PAGE
+{% endblock %}
+
+{% load static %}
+
+{% block js %}
+<script type="text/javascript" src="{% static 'js/login_page.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/open_pin.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<style>
+    .image-holder {
+      position: relative;
+
+}
+.image-holder .btn {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+}
+</style>
+<div class="container text-center">
+    <h1 class="text-danger"><b></b></h1>
+    <br>
+    <br>
+    <div class="row">
+        <div class="col-sm-8 border border-danger rounded">
+            <h1 class="text-danger"><b>YOUR PINS</b></h1>
+<!--            {% for folder in folders %}-->
+<!--            <a class="btn btn-sm btn-danger">{{folder.name}}</a>-->
+<!--            <img src="{{folder.folder_image}}">-->
+<!--            {% endfor %}-->
+
+            <div class="row">
+                {% for folder in folders %}
+                <div class="col image-holder">
+                    <img class="rounded" src="{{folder.folder_image}}" width="200" style="width: 200px;">
+                    <a href="{% url 'select-folder' %}" class="btn btn-sm btn-danger rounded"><b>{{folder.name}}</b></a>
+                </div>
+                {% endfor %}
+            </div>
+
+
+
+
+
+        </div>
+        <div class="col-sm-4 text-left">
+            <h1 class="text-primary"><b>CREATE NEW PIN</b></h1>
+            <div class="text-right">
+                <a onclick="open_pin()" class="btn btn-md btn-outline-danger rounded-circle text-right"><i class="fas fa-plus-circle"></i></a>
+            </div>
+            <div id="add-pin" class="d-none">
+
+                <br>
+                <form action="{% url 'my-pins' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="text" name="pin-name" placeholder="ADD YOUR TITLE" class="form-control" required>
+
+                    <div class="text-right text-primary">
+                        <p class="text-uppercase"><b>{{user}}</b></p>
+                    </div>
+                    <input type="text" name="description" placeholder="Tell everyone what your pin is about" class="form-control">
+                    <br>
+                    <label class="text-dark">Select Image:</label>
+                    <input type="file" name="image" class="form-control" placeholder="Select Image" required>
+                    <br>
+<!--                Board    --------------------->
+                    <label class="btn-sm btn-danger" onclick="show_board()"><i class="fas fa-plus-circle"></i> Select Board</label>
+                    <br>
+                    <label class="btn-sm btn-danger" onclick="show_new_tag()"><i class="fas fa-plus-circle"></i> Create New Board</label>
+                    <div id="select-board" class="d-none">
+                        <label class="text-danger">Select a Board</label>
+                        <select name="board" class="form-control" aria-label="Default select example">
+                          <option selected class="text-primary">---- Select A Board ----</option>
+                            {% for folder in folders %}
+                          <option value="{{folder.id}}">{{folder.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div id="new-board" class="d-none">
+                        <label class="text-danger"><i class="fas fa-plus-circle"></i> Create a New Board</label>
+                        <input  type="text" class="form-control" name="new-board" placeholder="Enter new Board">
+                    </div>
+                    <br>
+<!--                Board    --------------------->
+<!--                Tags    --------------------->
+                    <label class="btn-sm btn-primary" onclick="show_tag_div()"><i class="fas fa-plus-circle"></i> Select Tags</label>
+                    <br>
+                    <label class="btn-sm btn-primary" onclick="show_new_tag_div()"><i class="fas fa-plus-circle"></i> Create New Tag</label>
+                    <div id="tags" class="d-none">
+                        <label class="text-primary">Select a Tag</label>
+                        <select name="tag" class="form-control" aria-label="Default select example">
+                          <option selected>---- Select A Tag ----</option>
+                            {% for tag in tags %}
+                          <option value="{{tag.id}}">{{tag.word}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div id="new-tag" class="d-none">
+                        <br>
+                        <label class="text-primary" ><i class="fas fa-plus-circle"></i> Create tags</label>
+                        <input  name="new-tag" type="text" placeholder="Enter Tags For Pin" class="form-control">
+                    </div>
+
+<!--                Tags    --------------------->
+                    <input type="submit" value="SAVE" class="btn btn-sm btn-danger rounded">
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+    <br>
+    <br>
+
+</div>
+{% endblock %}
