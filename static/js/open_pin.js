@@ -1,3 +1,5 @@
+console.log("inside the window");
+window.location.reload()
 
 function open_pin(){
 console.log("open_pin----function");

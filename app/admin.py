@@ -11,7 +11,7 @@ admin.site.index_title = "SCI-FI PORTAL"
 # Register your models here.
 @admin.register(Folder)
 class FolderAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'name', 'folder_image']  # for showing desired fields in the page
+    list_display = ['id', 'user', 'name', 'slug', 'folder_image']  # for showing desired fields in the page
     list_display_links = ['id']  # making a filed clickable to open the desired row
     list_editable = ['name']  # making a field editable from the outside
     search_fields = ['user', 'name']  # search using the fields
@@ -22,7 +22,7 @@ class FolderAdmin(admin.ModelAdmin):
     # exclude = ['name']
     fieldsets = [
         ('USER ASSOCIATED', {'fields': ['user']}),
-        ('FOLDER NAME', {'fields': ['name', 'folder_image']}),
+        ('FOLDER NAME', {'fields': ['name', 'slug', 'folder_image']}),
     ]  # for adding headings to the desired fields
 
     radio_fields = {'user': admin.HORIZONTAL}  # for adding radio filed to the filed which has more than one choice

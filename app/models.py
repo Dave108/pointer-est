@@ -10,6 +10,7 @@ from django.utils.html import mark_safe
 class Folder(models.Model):
     user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
+    slug = models.CharField(max_length=250)
     folder_image = models.TextField(null=True, blank=True)
 
     def __str__(self):
@@ -57,9 +58,6 @@ class UserImage(models.Model):
     imagesPin = models.ForeignKey(ImagesPin, on_delete=models.CASCADE)
     folder = models.ForeignKey(Folder, on_delete=models.CASCADE, null=True, blank=True)
     user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.folder.name
 
 
 class ImageTest(models.Model):

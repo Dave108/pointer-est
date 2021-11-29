@@ -1,7 +1,7 @@
 {% extends './base.html' %}
 
 {% block title %}
-START PAGE
+MY PINS
 {% endblock %}
 
 {% load static %}
@@ -41,7 +41,7 @@ START PAGE
                 {% for folder in folders %}
                 <div class="col image-holder">
                     <img class="rounded" src="{{folder.folder_image}}" width="200" style="width: 200px;">
-                    <a href="{% url 'select-folder' %}" class="btn btn-sm btn-danger rounded"><b>{{folder.name}}</b></a>
+                    <a href="{% url 'board-open' folder.slug %}" class="btn btn-lg text-light rounded " style="background: rgba(0, 0, 0, 0.4); width:200px;"><b>{{folder.name}}</b></a>
                 </div>
                 {% endfor %}
             </div>
@@ -59,7 +59,7 @@ START PAGE
             <div id="add-pin" class="d-none">
 
                 <br>
-                <form action="{% url 'my-pins' %}" method="POST" enctype="multipart/form-data">
+                <form action="{% url 'create-pin' %}" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     <input type="text" name="pin-name" placeholder="ADD YOUR TITLE" class="form-control" required>
 

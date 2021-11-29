@@ -148,15 +148,35 @@ def create_tags(tag):
     return send_tags
 
 
+def create_folder_slug(name):
+    print(name, "---inside create folder slug")
+    name = slug_the_name(name)
+    print(name, "---After slugifying the name")
+    exist_slug = Folder.objects.filter(slug=name).exists()
+
+    if exist_slug:
+
+        name = name + "uni"
+        print(name)
+        return name
+    else:
+        print(name)
+        return name
+
+
 def my_pins(request):
     folders = Folder.objects.filter(user=request.user)
     tags = Tag.objects.all()
-    for folder in folders:
-        print(folder)
-    for tag in tags:
-        print(tag)
 
-        # for saving pins --------------------
+    context = {
+        "folders": folders,
+        "tags": tags,
+    }
+    return render(request, 'my_pins.html', context)
+
+
+def create_pin(request):
+    # for saving pins --------------------
     if request.method == "POST":
         new_folder = ''
         # print(request.POST)
@@ -170,9 +190,14 @@ def my_pins(request):
         pinned_image = ImagesPin.objects.create(
             image=image,
             image_name=pinname,
-            slug=slugged_name,
             description=desc,
         )
+        if ImagesPin.objects.filter(slug=slugged_name).exists():
+            pinned_image.slug = slugged_name + str(pinned_image.id)
+            pinned_image.save()
+        else:
+            pinned_image.slug = slugged_name
+            pinned_image.save()
 
         if request.POST.get('board') == "---- Select A Board ----":
             board = request.POST.get('new-board')
@@ -184,11 +209,21 @@ def my_pins(request):
                     print("try ran")
                 except:
                     print("except ran")
+                    folder_slug = create_folder_slug(board)
+
                     new_folder = Folder.objects.create(
                         user=request.user,
                         name=board,
                         folder_image=pinned_image.image.url,
                     )
+                    if "uni" in folder_slug:
+                        print("not unique")
+                        new_folder.slug = folder_slug + str(new_folder.id)
+                        new_folder.save()
+                    else:
+                        new_folder.slug = folder_slug
+                        new_folder.save()
+
         else:
             board = request.POST.get('board')
             print(board, 'lower board')
@@ -229,30 +264,13 @@ def my_pins(request):
                 imagesPin=pinned_image,
                 user=request.user,
             )
-    context = {
-        "folders": folders,
-        "tags": tags,
-    }
-    return render(request, 'my_pins.html', context)
+    return HttpResponseRedirect('/my-pins/')
 
-# def create_pin(request):
-#     if request.method == "POST":
-#         print(request.POST)
-#         pinname = request.POST.get('pin-name')
-#         desc = request.POST.get('description')
-#         image = request.POST.get('image')
-#         if request.POST.get('board') == "Select A Board":
-#             print("equal board")
-#             board = request.POST.get('new-board')
-#         else:
-#             print("not equal board")
-#             board = request.POST.get('board')
-#
-#         if request.POST.get('tag') == "Select A Tag":
-#             print("equal tag")
-#             tag = request.POST.get('new-tag')
-#         else:
-#             print("not equal tag")
-#             tag = request.POST.get('tag')
-#         print(pinname, desc, image, board, tag)
-#     return HttpResponseRedirect('/my-pins/')
+
+def open_folder(request, slug):
+    folder = Folder.objects.get(slug=slug)
+    folder_images = UserImage.objects.filter(folder=folder)
+    context = {
+        "images": folder_images,
+    }
+    return render(request, 'my_folder.html', context)
