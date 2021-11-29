@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import ReadOnlyPasswordHashField, UserCreationForm
 import re
 import cloudinary
+from .middlewares.redirectmiddleware import redirect_middleware
 
 
 # Create your views here.
@@ -327,6 +328,7 @@ def fav_pin(request, pk):
     return HttpResponseRedirect('/user-panel/')
 
 
+@redirect_middleware
 @login_required(login_url="homepage")
 def my_fav_pins(request):
     if request.method == "GET":

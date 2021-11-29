@@ -56,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'app.middlewares.subdomain.subdomain_middleware',  # my custom middleware for subdomain change
+    # 'app.middlewares.redirectmiddleware.redirect_middleware',  # my custom middleware for redirecting
 ]
 
 ROOT_URLCONF = 'pinterest_clone_proj.urls'
