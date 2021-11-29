@@ -24,6 +24,13 @@ Board Images
   transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
 }
+.image-holder .fav_btn {
+  position: absolute;
+  top: 25%;
+  left: 75%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+}
 </style>
 <div class="container text-center">
     <h1 class="text-danger"><b></b></h1>
@@ -31,7 +38,7 @@ Board Images
     <br>
     <div class="row">
         <div class="col border border-danger rounded">
-            <h1 class="text-danger"><b>YOUR PINS</b></h1>
+            <h1 class="text-danger text-uppercase"><b>{{board_name}} PINS</b></h1>
 <!--            {% for folder in folders %}-->
 <!--            <a class="btn btn-sm btn-danger">{{folder.name}}</a>-->
 <!--            <img src="{{folder.folder_image}}">-->
@@ -39,9 +46,15 @@ Board Images
 
             <div class="row">
                 {% for img in images %}
-                <div class="col image-holder">
+                <div class="col-sm-3 image-holder">
                     <img class="rounded" src="{{img.imagesPin.image.url}}" width="200" style="width: 200px;">
-                    <a href="" class="btn btn-lg text-light rounded " style="background: rgba(0, 0, 0, 0.4); width:200px;"><b>{{img.imagesPin.image_name}}</b></a>
+                    <a href="#" class="btn btn-lg text-light rounded " style="background: rgba(0, 0, 0, 0.4); width:200px;"><b>{{img.imagesPin.image_name}}</b></a>
+<!--                    <a href="{% url 'fav-pin' img.imagesPin.id %}" class="fav_btn btn-sm btn-danger rounded "><i class="fas fa-star"></i></a>-->
+                    {% if img.imagesPin.favimage_set.all %}
+                    <a href="{% url 'fav-pin' img.imagesPin.id %}" class="fav_btn btn-sm btn-danger rounded "><i class="fas fa-star"></i></a>
+                    {% else %}
+                    <a href="{% url 'fav-pin' img.imagesPin.id %}" class="fav_btn btn-sm btn-danger rounded "><i class="far fa-star"></i></a>
+                    {% endif %}
                 </div>
                 {% endfor %}
             </div>

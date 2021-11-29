@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Folder, ImagesPin, UserImage, Tag, ImageTest
+from .models import Folder, ImagesPin, UserImage, Tag, ImageTest, FavImage
 from django import forms
 
 # admin headings customizations
@@ -31,6 +31,11 @@ class FolderAdmin(admin.ModelAdmin):
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     list_display = ['id', 'word', 'count', 'created_at']
+
+
+@admin.register(FavImage)
+class FavImageAdmin(admin.ModelAdmin):
+    list_display = ['id', 'imagesPin', 'user']
 
 
 @admin.register(ImagesPin)

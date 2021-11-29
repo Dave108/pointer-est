@@ -13,6 +13,8 @@ urlpatterns = [
                   path('save-image/', views.save_image, name="save-image"),
                   path('my-pins/', views.my_pins, name="my-pins"),
                   path('create-pin/', views.create_pin, name="create-pin"),
+                  path('fav-pin/<int:pk>', views.fav_pin, name="fav-pin"),
+                  path('my-fav-pins/', views.my_fav_pins, name="my-fav-pins"),
                   path('my-pins/<slug>/', views.open_folder, name="board-open"),  # for opening folders and checking their images
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 if settings.DEBUG:

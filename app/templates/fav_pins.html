@@ -1,0 +1,52 @@
+{% extends './base.html' %}
+
+{% block title %}
+MY FAV PINS
+{% endblock %}
+
+{% load static %}
+
+{% block js %}
+<!--<script type="text/javascript" src="{% static 'js/login_page.js' %}"></script>-->
+<!--<script type="text/javascript" src="{% static 'js/open_pin.js' %}"></script>-->
+{% endblock %}
+
+{% block content %}
+<style>
+    .image-holder {
+      position: relative;
+
+}
+.image-holder .btn {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+}
+.image-holder .fav_btn {
+  position: absolute;
+  top: 24%;
+  left: 75%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+}
+</style>
+<div class="container text-center">
+    <h1 class="text-danger"><b></b></h1>
+    <br>
+    <h1 class="text-danger"><b>FAVOURITE PINS</b></h1>
+    <div class="row text-uppercase">
+        {% for img in images %}
+        <div class="col-sm-3 image-holder">
+            <img class="rounded" src="{{img.imagesPin.image.url}}" width="200" style="width: 200px;">
+                    <a href="" class="btn btn-lg text-light rounded " style="background: rgba(0, 0, 0, 0.4); width:200px;"><b>{{img.imagesPin.image_name}}</b></a>
+                    <a href="?action={{img.id}}" class="fav_btn btn-sm btn-danger rounded "><i class="fas fa-star"></i></a>
+        </div>
+        {% endfor %}
+    </div>
+    <br>
+    <br>
+
+</div>
+{% endblock %}

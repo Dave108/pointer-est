@@ -55,8 +55,13 @@ class ImagesPin(models.Model):
 
 
 class UserImage(models.Model):
-    imagesPin = models.ForeignKey(ImagesPin, on_delete=models.CASCADE)
+    imagesPin = models.ForeignKey(ImagesPin, on_delete=models.CASCADE, related_name="pinimages")
     folder = models.ForeignKey(Folder, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
+
+
+class FavImage(models.Model):
+    imagesPin = models.ForeignKey(ImagesPin, on_delete=models.CASCADE)
     user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
 
 

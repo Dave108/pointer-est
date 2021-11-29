@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse
-from .models import Folder, ImagesPin, UserImage, Tag
+from .models import Folder, ImagesPin, UserImage, Tag, FavImage
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout, get_user_model
@@ -92,13 +92,25 @@ def registration(request):
 @login_required(login_url="homepage")
 def user_panel_view(request):
     print("---- Inside user panel")
-    images = ImagesPin.objects.all()
+    images = None
+    # user_img = [u_img.imagesPin.id for u_img in UserImage.objects.exclude(user=request.user)]
+    user_img = [u_img.imagesPin.id for u_img in UserImage.objects.filter(user=request.user)]
+    print(user_img)
+    if user_img:
+        # images = user_img.pinimages_set.exclude(user=request.user)
+
+        # images = ImagesPin.objects.filter(id__in=user_img)
+        images = ImagesPin.objects.exclude(id__in=user_img)
+        print(images)
+    else:
+        images = ImagesPin.objects.all()
     context = {
         "images": images
     }
     return render(request, 'user_panel.html', context)
 
 
+@login_required(login_url="homepage")
 def select_folder(request):
     all_folders = Folder.objects.filter(user=request.user)
     context = {
@@ -164,6 +176,7 @@ def create_folder_slug(name):
         return name
 
 
+@login_required(login_url="homepage")
 def my_pins(request):
     folders = Folder.objects.filter(user=request.user)
     tags = Tag.objects.all()
@@ -175,6 +188,21 @@ def my_pins(request):
     return render(request, 'my_pins.html', context)
 
 
+def add_unorganised_folder(user_for_folder, url):
+    folder = Folder.objects.filter(user=user_for_folder, name="Unorganised pins").first()
+    if folder:
+        return folder
+    else:
+        folder = Folder.objects.create(
+            user=user_for_folder,
+            name="Unorganised pins",
+            slug="unorganised-pins",
+            folder_image=url,
+        )
+        return folder
+
+
+@login_required(login_url="homepage")
 def create_pin(request):
     # for saving pins --------------------
     if request.method == "POST":
@@ -260,17 +288,57 @@ def create_pin(request):
                 user=request.user,
             )
         else:
+            user_for_folder = request.user
+            url = pinned_image.image.url
+            unorganised_folder = add_unorganised_folder(user_for_folder, url)
             UserImage.objects.create(
                 imagesPin=pinned_image,
+                folder=unorganised_folder,
                 user=request.user,
             )
     return HttpResponseRedirect('/my-pins/')
 
 
+@login_required(login_url="homepage")
 def open_folder(request, slug):
     folder = Folder.objects.get(slug=slug)
     folder_images = UserImage.objects.filter(folder=folder)
     context = {
         "images": folder_images,
+        "board_name": folder.name,
     }
     return render(request, 'my_folder.html', context)
+
+
+@login_required(login_url="homepage")
+def fav_pin(request, pk):
+    print(pk)
+    image = ImagesPin.objects.get(id=pk)
+    try:
+        print("try")
+        img = FavImage.objects.get(imagesPin=image, user=request.user)
+        if img:
+            img.delete()
+        else:
+            FavImage.objects.create(imagesPin=image, user=request.user)
+    except:
+        print("exception")
+        FavImage.objects.create(imagesPin=image, user=request.user)
+    return HttpResponseRedirect('/user-panel/')
+
+
+@login_required(login_url="homepage")
+def my_fav_pins(request):
+    if request.method == "GET":
+        id = request.GET.get('action')
+        print(id)
+        try:
+            fav_img = FavImage.objects.get(id=id)
+            fav_img.delete()
+        except:
+            pass
+    images = FavImage.objects.filter(user=request.user)
+    context = {
+        "images": images
+    }
+    return render(request, 'fav_pins.html', context)

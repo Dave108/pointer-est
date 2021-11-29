@@ -39,7 +39,7 @@ MY PINS
 
             <div class="row">
                 {% for folder in folders %}
-                <div class="col image-holder">
+                <div class="col image-holder text-uppercase">
                     <img class="rounded" src="{{folder.folder_image}}" width="200" style="width: 200px;">
                     <a href="{% url 'board-open' folder.slug %}" class="btn btn-lg text-light rounded " style="background: rgba(0, 0, 0, 0.4); width:200px;"><b>{{folder.name}}</b></a>
                 </div>

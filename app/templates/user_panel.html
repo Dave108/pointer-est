@@ -23,16 +23,39 @@ User Home-Page
   transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
 }
+.image-holder .pin_name {
+  position: absolute;
+  top: 90%;
+  left: 53%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+}
+.image-holder .fav_btn {
+  position: absolute;
+  top: 20%;
+  left: 85%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+}
 </style>
 <div class="container-fluid text-center">
     <p><h1><b>WELCOME</b></h1>
         <h1 class="text-primary text-uppercase"><b>{{user}}</b></h1>
     </p>
-    <div class="row">
+    <div class="row text-uppercase">
         {% for img in images %}
         <div class="col-sm-2 image-holder">
             <img class="rounded" src="{{img.image.url}}" width="200" style="width: 200px;">
             <a href="{% url 'select-folder' %}" class="btn btn-sm btn-danger rounded"><b>SAVE</b></a>
+            <a href="" class="pin_name btn-lg text-light rounded " style="background: rgba(0, 0, 0, 0.4); width:200px;"><b>{{img.image_name}}</b></a>
+            {% if img.favimage_set.all %}
+            <a href="{% url 'fav-pin' img.id %}" class="fav_btn btn-sm btn-danger rounded "><i class="fas fa-star"></i></a>
+            {% else %}
+            <a href="{% url 'fav-pin' img.id %}" class="fav_btn btn-sm btn-danger rounded "><i class="far fa-star"></i></a>
+            {% endif %}
+<!--            {% if img.favimage_set.all %}-->
+<!--            <p>hello</p>-->
+<!--            {% endif %}-->
         </div>
         {% endfor %}
     </div>
