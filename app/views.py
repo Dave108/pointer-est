@@ -9,6 +9,8 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField, UserCreationFor
 import re
 import cloudinary
 from .middlewares.redirectmiddleware import redirect_middleware
+from django.contrib import messages
+from django.db.models import Q
 
 
 # Create your views here.
@@ -22,14 +24,6 @@ def home_view(request):
         "images": images[0:18]
     }
     return render(request, 'home.html', context)
-
-
-def create_folder(request):
-    name = "name_test"
-    Folder.objects.create(
-        user=request.user,
-        name=name,
-    )
 
 
 def logout_user(request):
@@ -111,11 +105,80 @@ def user_panel_view(request):
     return render(request, 'user_panel.html', context)
 
 
+def save_to_folder(user, pk, fol_id):
+    fol = Folder.objects.get(id=fol_id)
+    img_to_save = ImagesPin.objects.get(id=pk)
+    if not fol.folder_image:
+        fol.folder_image = img_to_save.image.url
+        fol.save()
+    UserImage.objects.create(
+        imagesPin=img_to_save,
+        folder=fol,
+        user=user,
+    )
+    return fol.name
+
+
+def create_board(request):
+    if request.method == "POST":
+        board_name = request.POST.get('board_name')
+        pk = request.POST.get('pk')
+        print(board_name)
+        try:
+            new_folder = Folder.objects.get(user=request.user, name=board_name)
+            print("try ran")
+        except:
+            print("except ran")
+            folder_slug = create_folder_slug(board_name)
+
+            new_folder = Folder.objects.create(
+                user=request.user,
+                name=board_name,
+            )
+            if "uni" in folder_slug:
+                print("not unique")
+                new_folder.slug = folder_slug + str(new_folder.id)
+                new_folder.save()
+            else:
+                new_folder.slug = folder_slug
+                new_folder.save()
+    return HttpResponseRedirect("/select-folder/?action='{}'".format(pk))
+
+
 @login_required(login_url="homepage")
 def select_folder(request):
+    pk = ''
+    pk = request.GET.get('action')
+    print(pk, "image id-----")
+    if pk is None:
+        print("PK IS NONE", pk)
+        messages.success(request, 'Select an Image first')
+        return HttpResponseRedirect('/user-panel/')
+    if "No" == pk or '"No"' == pk:
+        print("PK IS NO--", pk)
+        messages.success(request, 'Select an Image first')
+        return HttpResponseRedirect('/user-panel/')
+    try:
+        # pk = pk[1:3]
+        pk = pk.split("'")
+        print(pk, '------------------------')
+        print(pk[1])
+        pk = pk[1]
+        if not pk:
+            print("pk is not here", pk)
+    except:
+        pass
+    if request.method == "POST":
+        fol_id = request.POST.get('folder_id')
+        print(fol_id, "folder_id")
+        user = request.user
+        result = save_to_folder(user, pk, fol_id)
+        messages.success(request, 'Image Saved To ' + result)
+        return HttpResponseRedirect('/user-panel/')
     all_folders = Folder.objects.filter(user=request.user)
     context = {
         "folders": all_folders,
+        "pk": pk,
     }
     return render(request, 'select_folder.html', context)
 
@@ -311,6 +374,23 @@ def open_folder(request, slug):
     return render(request, 'my_folder.html', context)
 
 
+# @login_required(login_url="homepage")
+# def fav_pin(request, pk):
+#     print(pk)
+#     image = ImagesPin.objects.get(id=pk)
+#     try:
+#         print("try")
+#         img = FavImage.objects.get(imagesPin=image, user=request.user)
+#         if img:
+#             img.delete()
+#         else:
+#             FavImage.objects.create(imagesPin=image, user=request.user)
+#     except:
+#         print("exception")
+#         FavImage.objects.create(imagesPin=image, user=request.user)
+#     return HttpResponseRedirect('/user-panel/')
+
+
 @login_required(login_url="homepage")
 def fav_pin(request, pk):
     print(pk)
@@ -333,7 +413,7 @@ def fav_pin(request, pk):
 def my_fav_pins(request):
     if request.method == "GET":
         id = request.GET.get('action')
-        print(id)
+        print(id, 'id-----')
         try:
             fav_img = FavImage.objects.get(id=id)
             fav_img.delete()
@@ -344,3 +424,39 @@ def my_fav_pins(request):
         "images": images
     }
     return render(request, 'fav_pins.html', context)
+
+
+def search_pins(request):
+    images = ''
+    search_text = ''
+    folder = ''
+    fol_images = ''
+    if request.method == "POST":
+        search_text = request.POST.get('search_text')
+        print(search_text)
+
+        # search query
+        images = ImagesPin.objects.filter(
+            Q(image_name__icontains=search_text) | Q(description__icontains=search_text) | Q(
+                slug__icontains=search_text)
+        )
+        if request.user.is_authenticated:
+            folder = [fol.id for fol in Folder.objects.filter(
+                Q(name__icontains=search_text, user=request.user) | Q(slug__icontains=search_text, user=request.user)
+            )]
+            if folder:
+                fol_images = UserImage.objects.filter(folder__in=folder)
+                pass
+                # user_img = [u_img.imagesPin.id for u_img in UserImage.objects.filter(user=request.user)]
+                # print(user_img)
+                # if user_img:
+                #     images = ImagesPin.objects.exclude(id__in=user_img)
+        print(images, "IMAGES")
+        print(folder, "FOLDER IDs")
+        print(fol_images, "FOL_IMAGES")
+    context = {
+        "images": images,
+        "search_text": search_text,
+        "fol_images": fol_images,
+    }
+    return render(request, 'search_pins.html', context)

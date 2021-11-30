@@ -25,7 +25,7 @@ User Home-Page
 }
 .image-holder .pin_name {
   position: absolute;
-  top: 90%;
+  top: 50%;
   left: 53%;
   transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
@@ -42,11 +42,18 @@ User Home-Page
     <p><h1><b>WELCOME</b></h1>
         <h1 class="text-primary text-uppercase"><b>{{user}}</b></h1>
     </p>
+    {% if messages %}
+      <div class="container-sm text-center p-3 mb-2 bg-danger text-white">
+            {% for message in messages %}
+            <h5 {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</h5>
+            {% endfor %}
+      </div>
+    {% endif %}
     <div class="row text-uppercase">
         {% for img in images %}
         <div class="col-sm-2 image-holder">
             <img class="rounded" src="{{img.image.url}}" width="200" style="width: 200px;">
-            <a href="{% url 'select-folder' %}" class="btn btn-sm btn-danger rounded"><b>SAVE</b></a>
+            <a href="{% url 'select-folder' %}?action='{{img.id}}'" class="btn btn-sm btn-danger rounded"><b>SAVE</b></a>
             <a href="" class="pin_name btn-lg text-light rounded " style="background: rgba(0, 0, 0, 0.4); width:200px;"><b>{{img.image_name}}</b></a>
             {% if img.favimage_set.all %}
             <a href="{% url 'fav-pin' img.id %}" class="fav_btn btn-sm btn-danger rounded "><i class="fas fa-star"></i></a>
