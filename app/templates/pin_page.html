@@ -1,13 +1,13 @@
 {% extends './base.html' %}
 
 {% block title %}
-User Home-Page
+Pin Page
 {% endblock %}
 
 {% load static %}
 
 {% block js %}
-<script type="text/javascript" src="{% static 'js/login_page.js' %}"></script>
+<!--<script type="text/javascript" src="{% static 'js/login_page.js' %}"></script>-->
 {% endblock %}
 
 {% block content %}
@@ -39,9 +39,8 @@ User Home-Page
 }
 </style>
 <div class="container-fluid text-center">
-    <p><h1><b>WELCOME</b></h1>
-        <h1 class="text-primary text-uppercase"><b>{{user}}</b></h1>
-    </p>
+<!--    <h3 class="text-primary text-capitalize"><b>{{img.image_name}}</b></h3>-->
+
     {% if messages %}
       <div class="container-sm text-center p-3 mb-2 bg-danger text-white">
             {% for message in messages %}
@@ -54,17 +53,30 @@ User Home-Page
         <div class="col-sm-2 image-holder">
             <img class="rounded" src="{{img.image.url}}" width="200" style="width: 200px;">
             <a href="{% url 'select-folder' %}?action='{{img.id}}'" class="btn btn-sm btn-danger rounded"><b>SAVE</b></a>
-            <a href="{% url 'pin-page' img.slug %}" class="pin_name btn-lg text-light rounded " style="background: rgba(0, 0, 0, 0.4); width:200px;"><b>{{img.image_name}}</b></a>
+            <a href="" class="pin_name btn-lg text-light rounded " style="background: rgba(0, 0, 0, 0.4); width:200px;"><b>{{img.image_name}}</b></a>
             {% if img.favimage_set.all %}
             <a href="{% url 'fav-pin' img.id %}" class="fav_btn btn-sm btn-danger rounded "><i class="fas fa-star"></i></a>
             {% else %}
             <a href="{% url 'fav-pin' img.id %}" class="fav_btn btn-sm btn-danger rounded "><i class="far fa-star"></i></a>
             {% endif %}
-<!--            {% if img.favimage_set.all %}-->
-<!--            <p>hello</p>-->
-<!--            {% endif %}-->
         </div>
         {% endfor %}
+    </div>
+
+    <div class="container">
+        {% if img %}
+        <br>
+        <br>
+        <div class="row">
+            <div class="col-sm-6">
+                <img class="rounded" src="{{img.image.url}}" width="200" style="width: 200px;">
+            </div>
+            <div class="col-sm-6 text-left">
+                <h2 class="text-dark"><b>{{img.image_name}}</b></h2>
+                <p class="text-primary">{{img.description}}</p>
+            </div>
+        </div>
+        {% endif %}
     </div>
     <br>
     <br>

@@ -40,7 +40,7 @@ class FavImageAdmin(admin.ModelAdmin):
 
 @admin.register(ImagesPin)
 class ImagesPinAdmin(admin.ModelAdmin):
-    list_display = ['id', 'image', 'image_name', 'slug', 'description']
+    list_display = ['id', 'image', 'image_name', 'slug', 'description', 'created_by']
 
     list_display_links = ['id']
     list_editable = ['image_name']
@@ -48,7 +48,7 @@ class ImagesPinAdmin(admin.ModelAdmin):
     ordering = ['image_name']
     list_filter = ['image_name', 'id']
 
-    fields = ['image', 'image_name', 'slug', 'tags', 'description']
+    fields = ['image', 'image_name', 'slug', 'tags', 'description', 'created_by']
     # exclude = ['name']
     # raw_id_fields = ['tags']
     prepopulated_fields = {'slug': ['image_name']}

@@ -32,6 +32,7 @@ class ImagesPin(models.Model):
     slug = models.CharField(max_length=250)
     tags = models.ManyToManyField(Tag, related_name='photos')
     description = models.TextField(null=True)
+    created_by = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.image_name

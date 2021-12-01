@@ -283,6 +283,7 @@ def create_pin(request):
             image=image,
             image_name=pinname,
             description=desc,
+            created_by=request.user,
         )
         if ImagesPin.objects.filter(slug=slugged_name).exists():
             pinned_image.slug = slugged_name + str(pinned_image.id)
@@ -426,6 +427,7 @@ def my_fav_pins(request):
     return render(request, 'fav_pins.html', context)
 
 
+@login_required(login_url="homepage")
 def search_pins(request):
     images = ''
     search_text = ''
@@ -460,3 +462,14 @@ def search_pins(request):
         "fol_images": fol_images,
     }
     return render(request, 'search_pins.html', context)
+
+
+@login_required(login_url="homepage")
+def pin_page(request, slug):
+    print(slug)
+    img_obj = ImagesPin.objects.get(slug=slug)
+    print(img_obj)
+    context = {
+        "img": img_obj,
+    }
+    return render(request, 'pin_page.html', context)
