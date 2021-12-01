@@ -48,7 +48,7 @@ Board Images
                 {% for img in images %}
                 <div class="col-sm-3 image-holder">
                     <img class="rounded" src="{{img.imagesPin.image.url}}" width="200" style="width: 200px;">
-                    <a href="#" class="btn btn-lg text-light rounded " style="background: rgba(0, 0, 0, 0.4); width:200px;"><b>{{img.imagesPin.image_name}}</b></a>
+                    <a href="{% url 'pin-page' img.imagesPin.slug %}" class="btn btn-lg text-light rounded " style="background: rgba(0, 0, 0, 0.4); width:200px;"><b>{{img.imagesPin.image_name}}</b></a>
 <!--                    <a href="{% url 'fav-pin' img.imagesPin.id %}" class="fav_btn btn-sm btn-danger rounded "><i class="fas fa-star"></i></a>-->
                     {% if img.imagesPin.favimage_set.all %}
                     <a href="{% url 'fav-pin' img.imagesPin.id %}" class="fav_btn btn-sm btn-danger rounded "><i class="fas fa-star"></i></a>

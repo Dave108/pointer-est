@@ -65,7 +65,7 @@ User Home-Page
             <div class="col-sm-2 image-holder">
                 <img class="rounded" src="{{fol.imagesPin.image.url}}" width="200" style="width: 200px;">
                 <a href="{% url 'select-folder' %}?action='{{fol.imagesPin.id}}'" class="btn btn-sm btn-danger rounded"><b>SAVE</b></a>
-                <a href="" class="pin_name btn-lg text-light rounded " style="background: rgba(0, 0, 0, 0.4); width:200px;"><b>{{fol.imagesPin.image_name}}</b></a>
+                <a href="{% url 'pin-page' fol.imagesPin.slug %}" class="pin_name btn-lg text-light rounded " style="background: rgba(0, 0, 0, 0.4); width:200px;"><b>{{fol.imagesPin.image_name}}</b></a>
                 {% if fol.imagesPin.favimage_set.all %}
                 <a href="{% url 'fav-pin' fol.imagesPin.id %}" class="fav_btn btn-sm btn-danger rounded "><i class="fas fa-star"></i></a>
                 {% else %}
@@ -78,7 +78,7 @@ User Home-Page
             <div class="col-sm-2 image-holder">
                 <img class="rounded" src="{{img.image.url}}" width="200" style="width: 200px;">
                 <a href="{% url 'select-folder' %}?action='{{img.id}}'" class="btn btn-sm btn-danger rounded"><b>SAVE</b></a>
-                <a href="" class="pin_name btn-lg text-light rounded " style="background: rgba(0, 0, 0, 0.4); width:200px;"><b>{{img.image_name}}</b></a>
+                <a href="{% url 'pin-page' img.slug %}" class="pin_name btn-lg text-light rounded " style="background: rgba(0, 0, 0, 0.4); width:200px;"><b>{{img.image_name}}</b></a>
                 {% if img.favimage_set.all %}
                 <a href="{% url 'fav-pin' img.id %}" class="fav_btn btn-sm btn-danger rounded "><i class="fas fa-star"></i></a>
                 {% else %}
@@ -93,7 +93,7 @@ User Home-Page
             <div class="col-sm-2 image-holder">
                 <img class="rounded" src="{{fol.imagesPin.image.url}}" width="200" style="width: 200px;">
                 <a href="{% url 'select-folder' %}?action='{{fol.imagesPin.id}}'" class="btn btn-sm btn-danger rounded"><b>SAVE</b></a>
-                <a href="" class="pin_name btn-lg text-light rounded " style="background: rgba(0, 0, 0, 0.4); width:200px;"><b>{{fol.imagesPin.image_name}}</b></a>
+                <a href="{% url 'pin-page' fol.imagesPin.slug %}" class="pin_name btn-lg text-light rounded " style="background: rgba(0, 0, 0, 0.4); width:200px;"><b>{{fol.imagesPin.image_name}}</b></a>
                 {% if fol.imagesPin.favimage_set.all %}
                 <a href="{% url 'fav-pin' fol.imagesPin.id %}" class="fav_btn btn-sm btn-danger rounded "><i class="fas fa-star"></i></a>
                 {% else %}
@@ -109,7 +109,7 @@ User Home-Page
             <div class="col-sm-2 image-holder">
                 <img class="rounded" src="{{img.image.url}}" width="200" style="width: 200px;">
                 <a href="{% url 'select-folder' %}?action='{{img.id}}'" class="btn btn-sm btn-danger rounded"><b>SAVE</b></a>
-                <a href="" class="pin_name btn-lg text-light rounded " style="background: rgba(0, 0, 0, 0.4); width:200px;"><b>{{img.image_name}}</b></a>
+                <a href="{% url 'pin-page' img.slug %}" class="pin_name btn-lg text-light rounded " style="background: rgba(0, 0, 0, 0.4); width:200px;"><b>{{img.image_name}}</b></a>
                 {% if img.favimage_set.all %}
                 <a href="{% url 'fav-pin' img.id %}" class="fav_btn btn-sm btn-danger rounded "><i class="fas fa-star"></i></a>
                 {% else %}
