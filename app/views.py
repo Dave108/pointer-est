@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse
-from .models import Folder, ImagesPin, UserImage, Tag, FavImage
+from .models import Folder, ImagesPin, UserImage, Tag, FavImage, Comment
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout, get_user_model
@@ -11,6 +11,7 @@ import cloudinary
 from .middlewares.redirectmiddleware import redirect_middleware
 from django.contrib import messages
 from django.db.models import Q
+from django.urls import reverse
 
 
 # Create your views here.
@@ -392,12 +393,14 @@ def open_folder(request, slug):
 #     return HttpResponseRedirect('/user-panel/')
 
 
+# @redirect_middleware
 @login_required(login_url="homepage")
 def fav_pin(request, pk):
     print(pk)
     image = ImagesPin.objects.get(id=pk)
     try:
-        print("try")
+        returnUrl = request.META['PATH_INFO']
+        print(returnUrl)
         img = FavImage.objects.get(imagesPin=image, user=request.user)
         if img:
             img.delete()
@@ -406,10 +409,13 @@ def fav_pin(request, pk):
     except:
         print("exception")
         FavImage.objects.create(imagesPin=image, user=request.user)
+    url_link = request.GET.get('action')
+    print(url_link)
+    if url_link == "pin_page":
+        return HttpResponseRedirect('/pin-page/{}/'.format(image.slug))
     return HttpResponseRedirect('/user-panel/')
 
 
-@redirect_middleware
 @login_required(login_url="homepage")
 def my_fav_pins(request):
     if request.method == "GET":
@@ -469,7 +475,44 @@ def pin_page(request, slug):
     print(slug)
     img_obj = ImagesPin.objects.get(slug=slug)
     print(img_obj)
+    comments = Comment.objects.filter(pin=img_obj)
     context = {
         "img": img_obj,
+        "comments": comments,
     }
     return render(request, 'pin_page.html', context)
+
+
+@login_required(login_url="homepage")
+def pin_comments(request, pk):
+    image = ImagesPin.objects.get(id=pk)
+    if request.method == "POST":
+        comment = request.POST.get('comment-text')
+        print(comment)
+        Comment.objects.create(
+            pin=image,
+            user=request.user,
+            body=comment,
+        )
+    # return HttpResponseRedirect('/pin-page/{}/'.format(image.slug))
+    return HttpResponseRedirect(reverse('pin-page', args=[image.slug]))
+
+
+@login_required(login_url="homepage")
+def comments_reply(request, pk, comment_pk):
+    print(pk)
+    image = ImagesPin.objects.get(id=pk)
+    if request.method == "POST":
+        print(comment_pk)
+        image = ImagesPin.objects.get(id=pk)
+        parent_comment = Comment.objects.get(id=comment_pk)
+        reply = request.POST.get('reply')
+        print(reply)
+        if reply:
+            Comment.objects.create(
+                pin=image,
+                user=request.user,
+                body=reply,
+                parent=parent_comment
+            )
+    return HttpResponseRedirect(reverse('pin-page', args=[image.slug]))

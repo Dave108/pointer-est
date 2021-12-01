@@ -8,6 +8,7 @@ Pin Page
 
 {% block js %}
 <!--<script type="text/javascript" src="{% static 'js/login_page.js' %}"></script>-->
+<script type="text/javascript" src="{% static 'js/comments_js.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -48,32 +49,90 @@ Pin Page
             {% endfor %}
       </div>
     {% endif %}
-    <div class="row text-uppercase">
-        {% for img in images %}
-        <div class="col-sm-2 image-holder">
-            <img class="rounded" src="{{img.image.url}}" width="200" style="width: 200px;">
-            <a href="{% url 'select-folder' %}?action='{{img.id}}'" class="btn btn-sm btn-danger rounded"><b>SAVE</b></a>
-            <a href="" class="pin_name btn-lg text-light rounded " style="background: rgba(0, 0, 0, 0.4); width:200px;"><b>{{img.image_name}}</b></a>
-            {% if img.favimage_set.all %}
-            <a href="{% url 'fav-pin' img.id %}" class="fav_btn btn-sm btn-danger rounded "><i class="fas fa-star"></i></a>
-            {% else %}
-            <a href="{% url 'fav-pin' img.id %}" class="fav_btn btn-sm btn-danger rounded "><i class="far fa-star"></i></a>
-            {% endif %}
-        </div>
-        {% endfor %}
-    </div>
+<!--    <div class="row text-uppercase">-->
+<!--        {% for img in images %}-->
+<!--        <div class="col-sm-2 image-holder">-->
+<!--            <img class="rounded" src="{{img.image.url}}" width="200" style="width: 200px;">-->
+<!--            <a href="{% url 'select-folder' %}?action='{{img.id}}'" class="btn btn-sm btn-danger rounded"><b>SAVE</b></a>-->
+<!--            <a href="" class="pin_name btn-lg text-light rounded " style="background: rgba(0, 0, 0, 0.4); width:200px;"><b>{{img.image_name}}</b></a>-->
+<!--            {% if img.favimage_set.all %}-->
+<!--            <a href="{% url 'fav-pin' img.id %}" class="fav_btn btn-sm btn-danger rounded "><i class="fas fa-star"></i></a>-->
+<!--            {% else %}-->
+<!--            <a href="{% url 'fav-pin' img.id %}" class="fav_btn btn-sm btn-danger rounded "><i class="far fa-star"></i></a>-->
+<!--            {% endif %}-->
+<!--        </div>-->
+<!--        {% endfor %}-->
+<!--    </div>-->
 
-    <div class="container">
+    <div class="container-fluid">
         {% if img %}
         <br>
         <br>
         <div class="row">
-            <div class="col-sm-6">
-                <img class="rounded" src="{{img.image.url}}" width="200" style="width: 200px;">
+            <div class="col-sm-6 text-right">
+                <img class="rounded" src="{{img.image.url}}" width="400" style="width: 400px;">
             </div>
             <div class="col-sm-6 text-left">
-                <h2 class="text-dark"><b>{{img.image_name}}</b></h2>
-                <p class="text-primary">{{img.description}}</p>
+                <div class="row">
+                    <div class="col-sm-10">
+                        <h1><b>Uploaded By <span class="text-danger text-capitalize">{{img.created_by}}</span></b></h1>
+                        <br>
+                        <br>
+                        <br>
+                        <h2 class="text-dark text-capitalize"><b class="text-primary">{{img.image_name}}</b></h2>
+                        <br>
+                        <h4 class="text-primary text-capitalize">{{img.description}}</h4>
+                        <br>
+                        <a class="btn-lg text-danger" onclick="open_comments()" style="text-decoration:none;"><b>COMMENTS<SPAN> <i class="fas fa-greater-than"></i></SPAN></b></a>
+                        <div id="comments_section" class="comment-form d-none">
+                            <form action="{% url 'pin-comments' img.id %}" method="POST">
+                                {% csrf_token %}
+                                <input type="text" class="form-control" placeholder="Enter Comment" name="comment-text" required>
+                                <br>
+                                <input type="submit" class="btn btn-sm btn-outline-danger rounded" value="POST COMMENT">
+                            </form>
+
+                            <div class="comments text-capitalize">
+                                <br>
+                                <br>
+                            {% for comment in comments %}
+                                {% if comment.is_parent %}
+                                <small>#{{ forloop.counter }}.  By: <b class="text-danger">{{comment.user}}  </b></small>
+                                <small>  Created On: <b class="text-danger">{{comment.creation_date}}</b></small>
+                                <br>
+                                <span class=""> - {{comment.body}}</span>
+                                <br>
+                                <form action="{% url 'comments-reply' img.id comment.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="text" name="reply" class="form-control" placeholder="Reply..." required>
+                                    <button type="submit" class="btn btn-sm btn-danger">Reply To {{comment.user}}'s Comment</button>
+                                </form>
+                                <div class="container-sm" style="margin-left: 2rem;">
+                                    {% for child_comment in comment.children %}
+                                    <small>~{{ forloop.counter }}. Reply By: <b class="text-danger">{{child_comment.user}}  </b></small>
+                                    <small>  Created On: <b class="text-danger">{{child_comment.creation_date}}</b></small>
+                                    <br>
+                                    <span class=""> - {{child_comment.body}}</span>
+                                    <br>
+                                    {% endfor %}
+                                </div>
+                                <br>
+                                {% endif %}
+                            {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 text-center">
+                        <a href="{% url 'select-folder' %}?action='{{img.id}}'" class="btn btn-sm btn-danger rounded"><b>SAVE</b></a>
+                        <br>
+                        <br>
+                        {% if img.favimage_set.all %}
+                        <a href="{% url 'fav-pin' img.id %}?action=pin_page" class="fav_btn btn-sm btn-danger rounded "><i class="fas fa-star"></i></a>
+                        {% else %}
+                        <a href="{% url 'fav-pin' img.id %}?action=pin_page" class="fav_btn btn-sm btn-danger rounded "><i class="far fa-star"></i></a>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
         {% endif %}

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Folder, ImagesPin, UserImage, Tag, ImageTest, FavImage
+from .models import Folder, ImagesPin, UserImage, Tag, ImageTest, FavImage, Comment
 from django import forms
 
 # admin headings customizations
@@ -69,3 +69,8 @@ class UserImageAdmin(admin.ModelAdmin):
 #
 #     thumbnail_preview.short_description = 'Thumbnail Preview'
 #     thumbnail_preview.allow_tags = True
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ['id', 'pin', 'user', 'body', 'creation_date', 'edited', 'parent']

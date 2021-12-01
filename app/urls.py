@@ -18,6 +18,8 @@ urlpatterns = [
                   path('create-board/', views.create_board, name="create-board"),
                   path('search-pins/', views.search_pins, name="search-pins"),
                   path('pin-page/<slug>/', views.pin_page, name="pin-page"),
+                  path('pin-comments/<int:pk>/', views.pin_comments, name="pin-comments"),
+                  path('pin-comments/<int:pk>/<int:comment_pk>/', views.comments_reply, name="comments-reply"),
                   path('my-pins/<slug>/', views.open_folder, name="board-open"),  # for opening folders and checking their images
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 if settings.DEBUG:

@@ -80,3 +80,26 @@ class ImageTest(models.Model):
             return format_html(
                 '<img src="{}" width="{}" height="{}">'.format(_thumbnail.url, _thumbnail.width, _thumbnail.height))
         return ""
+
+
+class Comment(models.Model):
+    pin = models.ForeignKey(ImagesPin, on_delete=models.CASCADE, related_name="pins")
+    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
+    body = models.TextField()
+    creation_date = models.DateTimeField(auto_now_add=True)
+    edited = models.BooleanField(default=False)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name="+")
+
+    def __str__(self):
+        return "Comment on:-"+self.pin.image_name
+
+    @property
+    def children(self):
+        print("hello this is model running----------------------------------------------")
+        return Comment.objects.filter(parent=self).order_by('-creation_date').all()
+
+    @property
+    def is_parent(self):
+        if self.parent is None:
+            return True
+        return False
