@@ -5,3 +5,7 @@ from django.shortcuts import render
 
 def panel(request):
     return render(request, 'panel.html')
+
+
+def show404(request):
+    return render(request, '404page.html')

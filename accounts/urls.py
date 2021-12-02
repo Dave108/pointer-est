@@ -1,5 +1,6 @@
 from django.urls import path, include
 from . import views
 urlpatterns = [
-    path('home-panel/', views.panel, name="home-panel"),
+    path('', views.panel, name="admin-panel"),
+    path('page404/', views.show404, name="404-panel"),
 ]

@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from sorl.thumbnail import get_thumbnail
 from django.utils.html import format_html
 from django.utils.html import mark_safe
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 # Create your models here.
@@ -115,3 +117,37 @@ class Comment(models.Model):
         if self.parent is None:
             return True
         return False
+
+
+class PinUser(models.Model):
+    gender_type = (
+        (1, "MALE"),
+        (2, "FEMALE")
+    )
+    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
+    name = models.CharField(max_length=200)
+    user_image = CloudinaryField('image')
+    email = models.CharField(max_length=200)
+    gender = models.IntegerField(default=1, choices=gender_type, null=True, blank=True)
+    age = models.IntegerField(null=True, blank=True)
+    following = models.ManyToManyField(User, related_name='following_user')
+
+    def __str__(self):
+        return "Pin User:- " + self.name
+
+
+@receiver(post_save, sender=User)
+# Now Creating a Function which will automatically insert data in PinUser
+def create_user_profile(sender, instance, created, **kwargs):
+    # if Created is true (Means Data Inserted)
+    print("signal running------", created, "----", instance.username)
+    if created:
+        print("inside creating")
+        # PinUser.objects.create(
+        #     user=instance,
+        # )
+
+
+# @receiver(post_save, sender=User)
+# def save_user_profile(sender, instance, **kwargs):
+#     instance.pinuser.save()

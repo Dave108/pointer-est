@@ -1,0 +1,55 @@
+{% extends './base.html' %}
+
+{% block title %}
+User-Page
+{% endblock %}
+
+{% load static %}
+
+{% block js %}
+<!--<script type="text/javascript" src="{% static 'js/login_page.js' %}"></script>-->
+<!--<script type="text/javascript" src="{% static 'js/open_pin.js' %}"></script>-->
+{% endblock %}
+
+{% block content %}
+
+<div class="container text-center">
+    <br>
+    <h1 class="text-primary"><b>Complete Your Profile</b></h1>
+    {% if messages %}
+      <div class="container-sm text-center p-3 mb-2 bg-danger text-white">
+            {% for message in messages %}
+            <h5 {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</h5>
+            {% endfor %}
+      </div>
+    {% endif %}
+    <div class="text-left">
+        <form action="{% url 'edit-user' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="text" name="name" placeholder="Enter Name" class="form-control" value="{{pinuser.name}}" required>
+            <br>
+            <input type="text" name="email" placeholder="Enter Email" class="form-control" value="{{pinuser.email}}">
+            <br>
+            <label class="text-dark">Update Your Profile Image:</label>
+            <input type="file" name="image" class="" placeholder="Select Image" required>
+            <img src="{{ pinuser.user_image.url }}" class="rounded" alt="YOUR CURRENT PROFILE PICTURE" width=150px;">
+            <br>
+            <br>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="inputGroupSelect01">Options</label>
+              </div>
+              <select name="gender" class="custom-select" id="inputGroupSelect01">
+                <option selected value="1">Male</option>
+                <option value="2">Female</option>
+              </select>
+            </div>
+            <br>
+            <div class="age">
+                <input type="number" name="age" class="form-control" placeholder="enter age" value="{{ pinuser.age }}">
+            </div>
+            <input type="submit" value="SAVE" class="btn btn-sm btn-danger rounded">
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends './base.html' %}
+
+{% block title %}
+User-Page
+{% endblock %}
+
+{% load static %}
+
+{% block js %}
+<!--<script type="text/javascript" src="{% static 'js/login_page.js' %}"></script>-->
+<!--<script type="text/javascript" src="{% static 'js/open_pin.js' %}"></script>-->
+{% endblock %}
+
+{% block content %}
+
+<div class="container text-center">
+    <div class="row">
+        <div class="col-sm-10">
+            <h1 class="text-primary text-uppercase"><b>Your Profile</b></h1>
+        </div>
+        <div class="col-sm-2">
+            <div class="Edit-Profile text-right">
+                <a href="{% url 'edit-user' %}" class="btn btn-md btn-warning rounded"><b>Edit Profile</b></a>
+            </div>
+        </div>
+    </div>
+
+    {% if messages %}
+      <div class="container-sm text-center p-3 mb-2 bg-danger text-white">
+            {% for message in messages %}
+            <h5 {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</h5>
+            {% endfor %}
+      </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="profile-img text-right">
+                <img class="rounded" width="300px;" src="{{pinuser.user_image.url}}">
+            </div>
+        </div>
+        <div class="col-sm-6">
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

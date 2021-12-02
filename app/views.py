@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse, get_object_or_404
-from .models import Folder, ImagesPin, UserImage, Tag, FavImage, Comment
+from .models import Folder, ImagesPin, UserImage, Tag, FavImage, Comment, PinUser
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout, get_user_model
@@ -29,8 +29,8 @@ def home_view(request):
 
 def logout_user(request):
     # deleting session
-    print(request.session['user'], "----session logout----------")
-    del request.session['user']
+    # print(request.session['user'], "----session logout----------")
+    # del request.session['user']
     # -----
 
     logout(request)
@@ -46,8 +46,8 @@ def login_user(request):
             login(request, user)
 
             # setting session
-            request.session['user'] = username
-            print(request.session['user'], "----session login----------")
+            # request.session['user'] = username
+            # print(request.session['user'], "----session login----------")
             # -----
             return HttpResponseRedirect('/user-panel/')
     return HttpResponseRedirect('/user-panel/')
@@ -96,6 +96,13 @@ def registration(request):
 
 @login_required(login_url="homepage")
 def user_panel_view(request):
+    pinuser = PinUser.objects.filter(user=request.user).first()
+    if not pinuser:
+        PinUser.objects.create(
+            user=request.user,
+            name=request.user.username,
+            email=request.user.email,
+        )
     print("---- Inside user panel")
     images = None
     # user_img = [u_img.imagesPin.id for u_img in UserImage.objects.exclude(user=request.user)]
@@ -541,3 +548,39 @@ def like_comment(request, slug, pk):
         comment.likes.add(request.user)
     print("saved")
     return HttpResponseRedirect(reverse('pin-page', args=[slug]))
+
+
+@login_required(login_url="homepage")
+def user_page(request):
+    pinuser = PinUser.objects.get(user=request.user)
+    context = {
+        "pinuser": pinuser,
+    }
+    return render(request, 'user_page.html', context)
+
+
+@login_required(login_url="homepage")
+def edit_user(request):
+    pinuser = PinUser.objects.get(user=request.user)
+    if request.method == "POST":
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        image = request.FILES.get('image')
+        gender = request.POST.get('gender')
+        age = request.POST.get('age')
+        print(name, email, image, gender, age)
+        # ----------
+        pinuser.name = name
+        pinuser.email = email
+        pinuser.user_image = image
+        pinuser.gender = gender
+        pinuser.age = age
+        pinuser.save()
+        # ----------
+        messages.success(request, 'Profile Updated')
+        return HttpResponseRedirect('/user-page/')
+
+    context = {
+        "pinuser": pinuser,
+    }
+    return render(request, 'edit_user.html', context)
