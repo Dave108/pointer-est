@@ -100,7 +100,14 @@ Pin Page
                                 <small>#{{ forloop.counter }}.  By: <b class="text-danger">{{comment.user}}  </b></small>
                                 <small>  Created On: <b class="text-danger">{{comment.creation_date}}</b></small>
                                 <br>
-                                <span class=""> - {{comment.body}}</span>
+                                <span class=""> - {{comment.body}}</span><br>
+                                <!--likes buttons-->
+                                {% if comment.liked_or_not %}
+                                <a class="text-danger" href="{% url 'like-comment' img.slug comment.id %}"><i class="fas fa-heart"></i></a>
+                                {% else %}
+                                <a class="text-danger" href="{% url 'like-comment' img.slug comment.id %}"><i class="far fa-heart"></i></a>
+                                {% endif %}
+                                <span class="text-danger">Total likes<b> - {{comment.total_likes}}</b></span>
                                 <br>
                                 <form action="{% url 'comments-reply' img.id comment.id %}" method="POST">
                                     {% csrf_token %}
@@ -112,7 +119,14 @@ Pin Page
                                     <small>~{{ forloop.counter }}. Reply By: <b class="text-danger">{{child_comment.user}}  </b></small>
                                     <small>  Created On: <b class="text-danger">{{child_comment.creation_date}}</b></small>
                                     <br>
-                                    <span class=""> - {{child_comment.body}}</span>
+                                    <span class=""> - {{child_comment.body}}</span><br>
+                                    <!--likes buttons-->
+                                    {% if child_comment.liked_or_not %}
+                                    <a class="text-danger" href="{% url 'like-comment' img.slug child_comment.id %}"><i class="fas fa-heart"></i></a>
+                                    {% else %}
+                                    <a class="text-danger" href="{% url 'like-comment' img.slug child_comment.id %}"><i class="far fa-heart"></i></a>
+                                    {% endif %}
+                                    <span class="text-danger">Total likes<b> - {{child_comment.total_likes}}</b></span>
                                     <br>
                                     {% endfor %}
                                 </div>

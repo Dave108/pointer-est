@@ -17,6 +17,7 @@ urlpatterns = [
                   path('my-fav-pins/', views.my_fav_pins, name="my-fav-pins"),
                   path('create-board/', views.create_board, name="create-board"),
                   path('search-pins/', views.search_pins, name="search-pins"),
+                  path('like-comment/<slug>/<int:pk>/', views.like_comment, name="like-comment"),
                   path('pin-page/<slug>/', views.pin_page, name="pin-page"),
                   path('pin-comments/<int:pk>/', views.pin_comments, name="pin-comments"),
                   path('pin-comments/<int:pk>/<int:comment_pk>/', views.comments_reply, name="comments-reply"),

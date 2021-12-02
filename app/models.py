@@ -89,9 +89,21 @@ class Comment(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
     edited = models.BooleanField(default=False)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name="+")
+    likes = models.ManyToManyField(User, related_name='comment_likes')
+
+    def total_likes(self):
+        return self.likes.count()
+
+    def liked_or_not(self):
+        # if self.likes.filter(id=request.user.id).exists():
+        #     liked = True
+        # else:
+        #     liked = False
+        print("liked_or_not ran------------------")
+        return "liked"
 
     def __str__(self):
-        return "Comment on:-"+self.pin.image_name
+        return "Comment on:-" + self.pin.image_name
 
     @property
     def children(self):

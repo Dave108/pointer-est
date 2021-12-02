@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse
+from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse, get_object_or_404
 from .models import Folder, ImagesPin, UserImage, Tag, FavImage, Comment
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
@@ -28,6 +28,11 @@ def home_view(request):
 
 
 def logout_user(request):
+    # deleting session
+    print(request.session['user'], "----session logout----------")
+    del request.session['user']
+    # -----
+
     logout(request)
     return HttpResponseRedirect(reverse('homepage'))
 
@@ -36,10 +41,14 @@ def login_user(request):
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
-        print(username, password)
         user = authenticate(username=username, password=password)
         if user is not None:
             login(request, user)
+
+            # setting session
+            request.session['user'] = username
+            print(request.session['user'], "----session login----------")
+            # -----
             return HttpResponseRedirect('/user-panel/')
     return HttpResponseRedirect('/user-panel/')
 
@@ -516,3 +525,19 @@ def comments_reply(request, pk, comment_pk):
                 parent=parent_comment
             )
     return HttpResponseRedirect(reverse('pin-page', args=[image.slug]))
+
+
+@login_required(login_url="homepage")
+def like_comment(request, slug, pk):
+    print(slug, pk)
+    try:
+        # comment = get_object_or_404(Comment, id=pk)
+        comment = Comment.objects.filter(id=pk).first()
+    except:
+        return HttpResponseRedirect(reverse('pin-page', args=[slug]))
+    if comment.likes.filter(id=request.user.id).exists():
+        comment.likes.remove(request.user)
+    else:
+        comment.likes.add(request.user)
+    print("saved")
+    return HttpResponseRedirect(reverse('pin-page', args=[slug]))
