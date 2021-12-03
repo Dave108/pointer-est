@@ -26,12 +26,12 @@ User-Page
     <div class="text-left">
         <form action="{% url 'edit-user' %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-            <input type="text" name="name" placeholder="Enter Name" class="form-control" value="{{pinuser.name}}" required>
+            <input type="text" name="name" placeholder="Enter Name" class="form-control" value="{{pinuser.name}}">
             <br>
             <input type="text" name="email" placeholder="Enter Email" class="form-control" value="{{pinuser.email}}">
             <br>
             <label class="text-dark">Update Your Profile Image:</label>
-            <input type="file" name="image" class="" placeholder="Select Image" required>
+            <input type="file" name="image" class="" placeholder="Select Image">
             <img src="{{ pinuser.user_image.url }}" class="rounded" alt="YOUR CURRENT PROFILE PICTURE" width=150px;">
             <br>
             <br>
@@ -50,6 +50,10 @@ User-Page
             </div>
             <input type="submit" value="SAVE" class="btn btn-sm btn-danger rounded">
         </form>
+
+        <br>
+        <br>
+        <a href="{% url 'user-page' %}" class="btn btn-sm btn-warning">Go Back to Profile</a>
     </div>
 </div>
 {% endblock %}

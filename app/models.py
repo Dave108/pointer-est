@@ -130,7 +130,8 @@ class PinUser(models.Model):
     email = models.CharField(max_length=200)
     gender = models.IntegerField(default=1, choices=gender_type, null=True, blank=True)
     age = models.IntegerField(null=True, blank=True)
-    following = models.ManyToManyField(User, related_name='following_user')
+    following_me = models.ManyToManyField(User, related_name='following_user')
+    i_follows = models.ManyToManyField(User, related_name='i_follows')
 
     def __str__(self):
         return "Pin User:- " + self.name

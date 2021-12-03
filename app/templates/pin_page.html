@@ -75,7 +75,7 @@ Pin Page
             <div class="col-sm-6 text-left detail">
                 <div class="row">
                     <div class="col-sm-10">
-                        <h1><b>Uploaded By <span class="text-danger text-capitalize">{{img.created_by}}</span></b></h1>
+                        <h1><b>Uploaded By <span class="text-danger text-capitalize"><a class="text-danger" href="{% url 'open-other-user' img.created_by %}">{{img.created_by}}</a></span></b></h1>
                         <br>
                         <br>
                         <br>

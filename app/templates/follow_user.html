@@ -1,0 +1,80 @@
+{% extends './base.html' %}
+
+{% block title %}
+{{oth_user.user}}'s Profile
+{% endblock %}
+
+{% load static %}
+
+{% block js %}
+<!--<script type="text/javascript" src="{% static 'js/login_page.js' %}"></script>-->
+<!--<script type="text/javascript" src="{% static 'js/open_pin.js' %}"></script>-->
+{% endblock %}
+
+{% block content %}
+
+<div class="container text-center">
+<!--    messages-->
+    {% if messages %}
+      <div class="container-sm text-center p-3 mb-2 bg-danger text-white">
+            {% for message in messages %}
+            <h5 {% if message.tags %} class="{{ message.tags }} text-capitalize"{% endif %}>{{ message }}</h5>
+            {% endfor %}
+      </div>
+    {% endif %}
+<!--    messages-->
+
+
+    <br>
+    <br>
+    <div class="row">
+
+        <div class="col-sm-6">
+            <div class="profile-img text-right">
+                <img class="rounded" width="300px;" src="{{oth_user.user_image.url}}">
+            </div>
+        </div>
+        <div class="col-sm-6 text-left text-capitalize">
+
+            <div class="follow_section">
+<!--                <div class="row">-->
+<!--                    <div class="col">-->
+<!--                        <a href="" class="btn btn-md btn-primary" style="width:100%;">Following</a>-->
+<!--                    </div>-->
+<!--                    <div class="col">-->
+<!--                        <a href="" class="btn btn-md btn-danger" style="width:100%;">Follows</a>-->
+<!--                    </div>-->
+<!--                </div>-->
+            </div>
+
+            <div class="user_details">
+                <div class="text-capitalize">
+
+                    {% if not followed %}
+                    <a href="{% url 'open-other-user' oth_user.user %}?action=follow" class="btn btn-sm btn-success">FOLLOW: {{oth_user.name}}</a><br>
+                    {% else %}
+                    <a href="{% url 'open-other-user' oth_user.user %}?action=unfollow" class="btn btn-sm btn-warning">UNFOLLOW: {{oth_user.name}}</a>
+                    <b>You are following: <span class="text-danger">{{oth_user.user}}</span></b>
+                    {% endif %}
+                </div>
+
+                <br>
+                <br>
+                <h4>Name: <b>{{oth_user.name}}</b></h4>
+                <h4>Email: <b>{{oth_user.email}}</b></h4>
+                {% if oth_user.gender == 1 %}
+                <h4>Gender: <b>Male</b></h4>
+                {% else %}
+                <h4>Gender: <b>Female</b></h4>
+                {% endif %}
+                <h4>Age: <b>{{oth_user.age}}</b></h4>
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+</div>
+{% endblock %}

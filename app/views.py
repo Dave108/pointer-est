@@ -103,7 +103,8 @@ def user_panel_view(request):
             name=request.user.username,
             email=request.user.email,
         )
-    print("---- Inside user panel")
+
+    # ------------to show all pins that are other than his-----------------
     images = None
     # user_img = [u_img.imagesPin.id for u_img in UserImage.objects.exclude(user=request.user)]
     user_img = [u_img.imagesPin.id for u_img in UserImage.objects.filter(user=request.user)]
@@ -116,8 +117,21 @@ def user_panel_view(request):
         print(images)
     else:
         images = ImagesPin.objects.all()
+    # ------------to show all pins that are other than his-----------------
+
+    # ----------------to show only those pins that user follows------------------------
+    current_user = PinUser.objects.get(user=request.user)
+    # users_i_follow = current_user.i_follows.all()
+    users_i_follow = current_user.i_follows.exclude(id=request.user.id)
+    pin_users = [pin_users.id for pin_users in users_i_follow]
+    print(pin_users)
+    print(users_i_follow)
+    images1 = ImagesPin.objects.filter(created_by__in=pin_users)
+    print(images1, "------asjdbasijb")
+    # ----------------to show only those pins that user follows------------------------
+
     context = {
-        "images": images
+        "images": images1
     }
     return render(request, 'user_panel.html', context)
 
@@ -553,8 +567,31 @@ def like_comment(request, slug, pk):
 @login_required(login_url="homepage")
 def user_page(request):
     pinuser = PinUser.objects.get(user=request.user)
+    print(pinuser.following_me.all())
+    print(pinuser.i_follows.all())
+    following_me = []
+    i_follows = []
+    for user in pinuser.following_me.all():
+        print(user.username)
+        following_me.append(user.username)
+    for user in pinuser.i_follows.all():
+        print(user.username)
+        i_follows.append(user.username)
+
+    print(following_me, i_follows)
+
+    # getting total pins
+    total_pins = ImagesPin.objects.filter(created_by=request.user)
+    if not total_pins.exists():
+        total_pins = 0
+    else:
+        total_pins = total_pins.count()
+
     context = {
         "pinuser": pinuser,
+        "following_me": following_me,
+        "i_follows": i_follows,
+        "total_pins": total_pins,
     }
     return render(request, 'user_page.html', context)
 
@@ -562,6 +599,9 @@ def user_page(request):
 @login_required(login_url="homepage")
 def edit_user(request):
     pinuser = PinUser.objects.get(user=request.user)
+    context = {
+        "pinuser": pinuser,
+    }
     if request.method == "POST":
         name = request.POST.get('name')
         email = request.POST.get('email')
@@ -570,9 +610,13 @@ def edit_user(request):
         age = request.POST.get('age')
         print(name, email, image, gender, age)
         # ----------
+        if not name and not email and not gender and not age:
+            messages.error(request, 'ENTER DETAILS IN FULL')
+            return render(request, 'edit_user.html', context)
         pinuser.name = name
         pinuser.email = email
-        pinuser.user_image = image
+        if image:
+            pinuser.user_image = image
         pinuser.gender = gender
         pinuser.age = age
         pinuser.save()
@@ -580,7 +624,59 @@ def edit_user(request):
         messages.success(request, 'Profile Updated')
         return HttpResponseRedirect('/user-page/')
 
-    context = {
-        "pinuser": pinuser,
-    }
     return render(request, 'edit_user.html', context)
+
+
+@login_required(login_url="homepage")
+def open_other_user(request, user):
+    user = User.objects.get_by_natural_key(username=user)
+    foll_user = PinUser.objects.get(user=user)
+    i_follow = PinUser.objects.get(user=request.user)
+    followed_or_not = foll_user.following_me.filter(id=request.user.id)
+    print(followed_or_not)
+    print(followed_or_not.exists())
+    if followed_or_not.exists():
+        followed = True
+    else:
+        followed = False
+    context = {
+        "oth_user": foll_user,
+        "followed_or_not": followed_or_not,
+        "followed": followed,
+    }
+
+    # # --------- don't open the follow page for the current user -----------
+    # print("-------sdgohdos-------")
+    # print(user)
+    # print(request.user.username)
+    # if str(user) == str(request.user.username):
+    #     return HttpResponseRedirect('/user-page/')
+
+    action = request.GET.get('action')
+    if action == 'follow':
+        print("inside action")
+        try:
+            foll_user.following_me.add(request.user)
+            foll_user.save()
+            # --- i follows add
+            i_follow.i_follows.add(user)
+            i_follow.save()
+            messages.success(request, 'Followed ' + foll_user.name)
+            return HttpResponseRedirect(reverse('open-other-user', kwargs={"user": user}))
+        except:
+            messages.success(request, 'Already Followed ' + foll_user.name)
+            return HttpResponseRedirect(reverse('open-other-user', kwargs={"user": user}))
+    elif action == 'unfollow':
+        print("inside unfollow")
+        try:
+            foll_user.following_me.remove(request.user)
+            foll_user.save()
+            # --- i follows remove
+            i_follow.i_follows.remove(user)
+            i_follow.save()
+            messages.success(request, 'UnFollowed ' + foll_user.name)
+            return HttpResponseRedirect(reverse('open-other-user', kwargs={"user": user}))
+        except:
+            messages.success(request, 'UnFollowed ' + foll_user.name)
+            return HttpResponseRedirect(reverse('open-other-user', kwargs={"user": user}))
+    return render(request, 'follow_user.html', context)

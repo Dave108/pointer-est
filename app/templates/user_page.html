@@ -12,7 +12,11 @@ User-Page
 {% endblock %}
 
 {% block content %}
-
+<script>
+        $('#myModal').on('shown.bs.modal', function () {
+          $('#myInput').trigger('focus')
+        })
+</script>
 <div class="container text-center">
     <div class="row">
         <div class="col-sm-10">
@@ -38,10 +42,99 @@ User-Page
                 <img class="rounded" width="300px;" src="{{pinuser.user_image.url}}">
             </div>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-6 text-left text-capitalize">
+
+            <div class="follow_section">
+                <div class="row">
+                    <div class="col">
+                                <!-- Button trigger modal -->
+                        <a href="" class="btn btn-md btn-primary" style="width:100%;" data-toggle="modal" data-target="#exampleModal">Following</a>
+                    </div>
+                    <div class="col">
+                                <!-- Button trigger modal -->
+                        <a href="" class="btn btn-md btn-danger" style="width:100%;" data-toggle="modal" data-target="#exampleModal1">Follows</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="user_details">
+                <br>
+                <br>
+                <h4>Total Pins Created: {{total_pins}}</h4>
+                <br>
+                <h4>Name: <b>{{pinuser.name}}</b></h4>
+                <h4>Email: <b>{{pinuser.email}}</b></h4>
+                {% if pinuser.gender == 1 %}
+                <h4>Gender: <b>Male</b></h4>
+                {% else %}
+                <h4>Gender: <b>Female</b></h4>
+                {% endif %}
+                <h4>Age: <b>{{pinuser.age}}</b></h4>
+            </div>
 
         </div>
     </div>
+
+
+
+
+
+    <div class="">
+
+        <!-- Modal for following -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title text-danger" id="exampleModalLabel">People Following You:</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                  <div class="text-left">
+                      {% for following in following_me %}
+                      <h5 class="text-danger text-capitalize"><b> {{ forloop.counter }} . <a class="text-danger" href="{% url 'open-other-user' following %}">{{following}}</a></b></h5>
+                      {% endfor %}
+                  </div>
+              </div>
+              <div class="modal-footer">
+<!--                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
+<!--                <button type="button" class="btn btn-primary">Save changes</button>-->
+              </div>
+            </div>
+          </div>
+        </div>
+
+<!--        &#45;&#45;&#45;&#45;second-->
+        <!-- Modal for follows -->
+        <div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title text-center text-danger" id="exampleModalLabel1">People You Are Following: </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                  <div class="text-left">
+                      {% for i_follow in i_follows %}
+                      <h5 class="text-danger text-capitalize"><b> {{ forloop.counter }} . <a class="text-danger" href="{% url 'open-other-user' i_follow %}">{{i_follow}}</a></b></h5>
+                      {% endfor %}
+                  </div>
+              </div>
+              <div class="modal-footer">
+<!--                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
+<!--                <button type="button" class="btn btn-primary">Save changes</button>-->
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+
+
 
 </div>
 {% endblock %}
